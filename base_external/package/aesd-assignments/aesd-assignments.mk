@@ -6,7 +6,7 @@
 ##############################################################
 
 #TODO: Fill up the contents below in order to reference your assignment 3 git contents
-AESD_ASSIGNMENTS_VERSION = '5bcbd0b4f26aa07b8738a59f8c61f01f9a7ad695'
+AESD_ASSIGNMENTS_VERSION = '547a857d0f9d698b242abc93af97d0e9f82292d0'
 # Note: Be sure to reference the *ssh* repository URL here (not https) to work properly
 # with ssh keys and the automated build/test system.
 # Your site should start with git@github.com:
@@ -16,12 +16,24 @@ AESD_ASSIGNMENTS_GIT_SUBMODULES = YES
 
 define AESD_ASSIGNMENTS_BUILD_CMDS
 	@echo "=== BUILDING AESD_ASSIGNMENTS ==="
-	@echo "Build directory: $(@D)"
-	@ls -la $(@D)/ || echo "Build directory not found"
-	@ls -la $(@D)/finder-app/ || echo "finder-app directory not found"
 	
+	# Build finder-app
 	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/finder-app all
 	
+	# Remove any pre-compiled binaries and force rebuild
+	@echo "Removing any pre-compiled binaries..."
+	rm -f $(@D)/server/aesdsocket
+	
+	@echo "Building server with cross-compilation..."
+	@echo "Using CC: $(TARGET_CC)"
+	$(MAKE) -C $(@D)/server \
+		CC="$(TARGET_CC)" \
+		CFLAGS="$(TARGET_CFLAGS)" \
+		V=1 \
+		all
+	
+	@echo "Checking built binary:"
+	@file $(@D)/server/aesdsocket
 	@echo "=== BUILD COMPLETE ==="
 endef
 
@@ -34,7 +46,7 @@ define AESD_ASSIGNMENTS_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 0755 $(@D)/finder-app/finder.sh $(TARGET_DIR)/usr/bin
 	$(INSTALL) -m 0755 $(@D)/finder-app/finder-test.sh $(TARGET_DIR)/usr/bin
 	$(INSTALL) -m 0755 $(@D)/finder-app/dependencies.sh $(TARGET_DIR)/usr/bin
-	$(INSTALL) -m 0755 $(@D)/server/S99aesdsocket.sh $(TARGET_DIR)/etc/init.d
+	$(INSTALL) -m 0755 $(@D)/server/S99aesdsocket $(TARGET_DIR)/etc/init.d/
 	$(INSTALL) -m 0755 $(@D)/server/aesdsocket $(TARGET_DIR)/usr/bin
 endef
 

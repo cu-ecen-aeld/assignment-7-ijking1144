@@ -12,7 +12,7 @@
 #include <signal.h>
 #include <errno.h>
 
-#define PORT "9000"
+#define PORT "10022"
 #define MAXDATASIZE 100
 #define DATAFILE "/var/tmp/aesdsocketdata"
 #define BACKLOG 10

@@ -1,0 +1,5 @@
+menu "AESD Assignments/LDD Packages"
+source "$BR2_EXTERNAL_AESD_ASSIGNMENTS_PATH/package/ldd/Config.in"
+source "$BR2_EXTERNAL_AESD_ASSIGNMENTS_PATH/package/aesd-assignments/Config.in"
+endmenu
+
